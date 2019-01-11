@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>修改宝贝</title>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script type="text/javascript" src="vue.min.js"></script>
+<script type="text/javascript" src="mui.min.js"></script>
+<script type="text/javascript" charset="UTF-8" src="kan.js"></script>
+<link rel="stylesheet" type="text/css" href="kan.css">
+<link rel="stylesheet" type="text/css" href="mui.css">
+
+<!-- 引入样式 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@1.4/lib/index.css">
+<!-- 引入组件 -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vant@1.4/lib/vant.min.js"></script>
+
+<style type="text/css"> 
+	.flex{display: flex;}
+</style>
+
+</head>
+<body>
+<div id="app">
+	
+	<!-- 头部 -->
+	<header class="mui-bar mui-bar-nay"><!--头部-->
+		<a class="mui-action-back mui-icon mui-icon-left-nav"></a>
+		<h1 class="mui-title ye-zts2">修改宝贝</h1>
+	</header>
+      
+	<!--修改资料-->
+	<div class="subject-form">
+		<p class="form-web-top">{{data.w_name}}</p>
+				
+		<div class="mui-input-row">
+			<span class="from-span fl"><strong class="from-span-strong">*&nbsp;</strong>推广预算：</span>
+			<input class="mui-input-clear" type="text" v-model="data.w_total">
+		</div>
+		
+		<div class="mui-input-row">
+			<span class="from-span fl"><strong class="from-span-strong">*&nbsp;</strong>红包金额：</span>
+			<input class="mui-input-clear" type="text" v-model="data.w_click">
+		</div>
+		
+		<div class="clear">
+			<span class="from-span fl">所在地区:</span>
+			<div class="from-select-div fl">
+				
+
+					<div class="flex">
+						
+						<div @click="provinces()">{{tost1}}</div>
+			          			<van-popup v-model="show1" position="bottom">
+			               			<van-picker
+			                          show-toolbar
+			                          :columns="columns"
+			                          @cancel="onCancel1"
+			                          @confirm="onConfirm1"
+			                        />
+			            </van-popup> 
+					</div>
+			</div>
+		</div>
+
+		<div class="clear">
+			<span class="from-span fl">所在城市:</span>
+			<div class="from-select-div fl">
+				
+
+					<div class="flex">
+						
+						<div @click="citys()">{{tost2}}</div>
+			          			<van-popup v-model="show2" position="bottom">
+			               			<van-picker
+			                          show-toolbar
+			                          :columns="columns2"
+			                          @cancel="onCancel2"
+			                          @confirm="onConfirm2"
+			                        />
+			            </van-popup> 
+					</div>
+			</div>
+		</div>
+
+
+		<div class="clear">
+			<span class="from-span fl">所在县区:</span>
+			<div class="from-select-div fl">
+					<div class="flex">
+				
+						<div @click="regions3()">{{tost3}}</div>
+			          			<van-popup v-model="show3" position="bottom">
+			               			<van-picker
+			                          show-toolbar
+			                          :columns="columns3"
+			                          @cancel="onCancel3"
+			                          @confirm="onConfirm3"
+			                        />
+			            </van-popup> 
+					</div>
+			</div>
+		</div>
+
+		
+		<div class="clear">
+			<span class="from-span fl">浏览时间：</span>
+			<div class="from-select-div fl">
+				<select v-model="web.w_interval" style="width:18%;">
+					<option>{{data.w_interval}}</option>
+					<option v-for="i in config_length.browse_time">{{i+config.browse_time_short-1}}</option>
+				</select>
+				<span class="select-span">（秒）</span>
+			</div>
+		</div>
+		
+		<div class="clear">
+			<span class="from-span fl">间隔时间：</span>
+			<div class="from-select-div fl">
+				<select v-model="web.w_effective" style="width:18%;">
+					<option>{{data.w_effective}}</option>
+					<option :value="i+config.day_short-1" v-for="i in config_length.day">{{i+config.day_short-1}}</option>
+				</select>
+				<span class="select-span">（天）</span>
+			</div>
+		</div>
+		
+		<div class="clear">
+			<span class="from-span fl">红包数量：</span>
+			<div class="from-select-div fl">
+				<select v-model="web.w_adopt" style="width:18%;">
+					<option>{{data.w_adopt}}</option>
+					<option>0</option>
+					<option v-for="i in config.hongbao_number">{{i}}</option>
+				</select>
+				<span class="select-span">（个）</span>
+			</div>
+		</div>
+		
+		<div class="clear">
+			<span class="from-span fl">面向年龄：</span>
+			<div class="from-select-div fl">
+				<select v-model="web.w_yeara" class="fl" style="width:18%;">
+					<option>{{data.w_yeara}}</option>
+					<option v-for="i in config_length.age">{{i+config.age_small-1}}</option>
+				</select>
+				<span class="fl">&nbsp;至&nbsp;</span>
+				<select v-model="web.w_yearb" class="fl" style="width:18%;">
+					<option>{{data.w_yearb}}</option>
+					<option v-for="i in config_length.age">{{1+config.age_large-i}}</option>
+				</select>
+				<span class="fl">&nbsp;岁</span>
+			</div>
+		</div>
+		
+		<div class="clear">
+			<span class="from-span fl">面向性别：</span>
+			<div class="from-radio-div fl">
+				<div class="mui-input-row mui-radio mui-left">
+					<label>全开</label>
+					<input name="radio1" type="radio" value="0" v-model="web.w_gender">
+				</div>
+				<div class="mui-input-row mui-radio mui-left">
+					<label>男</label>
+					<input name="radio1" type="radio" value="1" v-model="web.w_gender">
+				</div>
+				<div class="mui-input-row mui-radio mui-left">
+					<label>女</label>
+					<input name="radio1" type="radio" value="2" v-model="web.w_gender">
+				</div>
+			</div>
+		</div>
+
+		<div class="clear">
+			<span class="from-span fl">宝贝描述：</span>
+			<textarea class="describe" v-model="web.w_describe"></textarea>
+		</div>
+		<br/><br/>
+		<button @tap="postButton()" type="button" class="button-large-a">确定</button>
+		<br/><br/><br/><br/><br/><br/>
+		</div>
+	</div>
+</div>
+</body>
+</html>
+
+<script type="text/javascript">
+	//加载完去除加载框
+	mui.plusReady(function() {
+		var currentView = plus.webview.currentWebview();
+		var w_id = currentView.Link.w_id;
+		 Vues.initial(w_id);	
+		currentView.show('slide-in-right', 300);
+		plus.nativeUI.closeWaiting();
+	});
+
+
+
+	//初始化
+	mui.init({
+		//返回监听
+		beforeback: function() {
+	　　　　 //获得父页面的webview
+			var list = plus.webview.currentWebview().opener();
+	　　　　 //触发父页面的自定义事件(refresh),从而进行刷新
+			mui.fire(list, 'websiteList');
+			//返回true,继续页面关闭逻辑
+			return true;
+		}
+	});
+	
+	//用户Token
+	var userToken = Common.Get('USER_INFO') == null ? '' : Common.Get('USER_INFO').token;
+	
+	var Vues = new Vue({
+		el:'#app',
+		data: {
+			data: '',		//宝贝资料
+			web:{
+				w_total: '',		//推广预算
+				w_click: '',		//红包金额
+				w_interval: '',		//浏览时间
+				w_effective: '',	//间隔时间
+				w_adopt: '',		//红包数量
+				w_yeara: '',		//最小年龄
+				w_yearb: '',		//最大年龄
+				w_gender: 0,		//性别
+				region_name: '',	//地名
+				w_describe: '',		//宝贝描述
+				password: ''		//支付密码
+			},
+			config: '',		//配置数据
+			config_length:{
+				browse_time: 0,	//浏览时间
+				age: 0,			//年龄
+				day: 0,			//间隔时间
+			},
+			//地区数据
+			province: [],	//省
+			city: [],		//市
+			county: [],		//区县
+			region_id: [],	//地区ID
+			province_select: 1,
+			city_select: 1,
+			county_select: 1,
+			
+			show1:false,
+			columns:['请求数据中'],
+			tost1:'请选择省份',
+			provincesid:'',
+			show2:false,
+			columns2:['请求数据中'],
+			tost2:'请选择城市',
+			cityid:'',
+			show3:false,
+			columns3:['请求数据中'],
+			tost3:'请选择区县',
+			county_id: ''
+		},
+		mounted: function(){},
+		created: function(){
+
+				this.initial(707); // ***初始化方法
+		},
+		methods :{
+			// 列表切换
+			toggle :function(menu){
+				this.isShowList = menu;
+			},
+			
+			//初始数据
+			initial: function(w_id){
+				console.log('123')
+				var _this = this;
+				const userToken='glbhtKfNrqF5CsLvM8s5y87vaKpvv6i6';// ***
+				if(userToken){
+					// mui.get(kankanUrl+'edit_website',{token:'Bwwri6JDOCFf87G57Hehvhel6kOKYGqU',w_id: w_id},
+ 				
+ 				//你自己恢复上面那种写法 我是在 created 调用该方法 //***
+ 				mui.get('http://www.kankanoo.com/edit_website?token=glbhtKfNrqF5CsLvM8s5y87vaKpvv6i6&w_id=707',function(res){
+ 					console.log(res);
+						if(res.code){
+							_this.data = res.data;	//宝贝数据
+							_this.config = res.config;	//配置文件
+							_this.web.w_total = _this.data.w_total;		//推广预算	
+							_this.web.w_click = _this.data.w_click;		//红包金额
+							_this.web.w_interval = _this.data.w_interval;	//浏览时间
+							_this.web.w_effective = _this.data.w_effective;	//间隔时间
+							_this.web.w_adopt = _this.data.w_adopt;		//红包数量
+							_this.web.w_yeara = _this.data.w_yeara;		//最小年龄
+							_this.web.w_yearb = _this.data.w_yearb;		//最大年龄
+							_this.web.w_gender = _this.data.w_gender;	//性别
+							_this.web.w_describe = _this.data.w_describe;	//宝贝描述
+							
+							//地区ID
+							if(_this.data.region_id){
+								var r_id = _this.data.region_id.split(',');
+								for(var i=0; i<r_id.length; i++){
+									if(r_id[i] != "0"){ _this.region_id.push(r_id[i]); }
+								}
+							}
+							console.log(res.data)
+							// console.log(res.data.region_id.split(','));
+							// console.log(res.data.region_name.split(','))
+
+							var preId_jh=res.data.region_id.split(',');
+							let pre_address=res.data.region_name.split(',');
+
+							//id
+							// console.log(preId_jh[0]+'--'+preId_jh[1]+'--'+preId_jh[2])
+
+							_this.provincesid=preId_jh[0];//省 id
+							_this.cityid=preId_jh[1];//市  id
+							_this.county_id=preId_jh[2];//区  id
+								//address 
+							// console.log(pre_address[0]+'--'+pre_address[1]+'--'+pre_address[2])
+
+							_this.tost1=pre_address[0];//省  string
+							_this.tost2=pre_address[1];//市  string
+							_this.tost3=pre_address[2];//区  string
+
+							//console.log(JSON.stringify(res.data));
+							//地域选择通用逻辑
+// 							if(_this.region_id.length == 1){
+// 								console.log(1);
+// 								_this.region_id[1] = 0;
+// 								_this.region_id[2] = 0;
+// 								_this.city = [];
+// 								_this.county = [];
+// 								_this.getParentid();
+// 							}else if(_this.region_id.length == 2){
+// 								console.log(2);
+// 								_this.id.region_id1 = newArrRegion[0];
+// 								_this.getParentid();
+// 								_this.getCity();
+// 								_this.getRegion();
+// 							}else if(_this.region_id.length == 3){
+// 								console.log(3);
+// 								_this.region_id[0] = newArrRegion[0];
+// 								_this.getParentid();
+// 								_this.getCity();
+// 								_this.region_id[1] = newArrRegion[1];
+// 								_this.getRegion();
+// 								_this.region_id[2] = newArrRegion[2];
+// 							}else{
+// 								
+// 								_this.region_id[0] = 0;
+// 								_this.region_id[1] = 0;
+// 								_this.region_id[2] = 0;
+// 								_this.getParentid();
+// 								console.log(JSON.stringify(_this.province));
+// 							}
+							
+							
+							//配置数据
+							_this.config_length.browse_time = (_this.config.browse_time_long - _this.config.browse_time_short)+1;	//浏览时间
+							_this.config_length.age = (_this.config.age_large - _this.config.age_small)+1;	//年龄
+							_this.config_length.day = (_this.config.day_long - _this.config.day_short)+1;	//间隔时间
+						}
+					});	
+				}
+			},
+						//获取省份
+			provinces(){ 
+				const that=this;
+
+				mui.get('http://www.kankanoo.com/get_parentid',function(res){ 
+					let province=[]
+						for(var i=0;i<res.data.length;i++){
+							res.data[i].text=res.data[i].region_name;
+							province.push(res.data[i]);
+						}
+					that.columns=res.data
+				})
+
+				that.show1=true;
+			},
+			//获取省份取消
+			onCancel1(value, index){
+				
+				this.show1=false;
+			},
+			//获取省份确定
+            onConfirm1(value, index){           
+            	if(value){ 
+            		this.show1=false;
+            		this.tost1=value.text;
+            		this.provincesid=value.region_id;
+
+            		//情况初始化赋值	
+					this.cityid='';//市 string
+					this.county_id='';//区 string
+					
+					this.tost2='请选择城市';//市 number
+					this.tost3='请选择区县';//区 number
+
+            	}
+            },
+			//获取城市
+			citys(){ 
+				const that=this;
+				if(this.provincesid==''){ 
+					 mui.toast('请选择省份');
+					 return false;
+				}
+
+				mui.get('http://www.kankanoo.com/get_citys?province_id='+this.provincesid,function(res){ 
+					let city=[]
+						for(var i=0;i<res.data.length;i++){
+							res.data[i].text=res.data[i].region_name;
+							city.push(res.data[i]);			
+						}
+					that.columns2=city
+				})
+				that.show2=true;
+			},	
+
+			//获取城市取消
+			onCancel2(value, index){
+				
+				this.show2=false;
+			},
+			//获取城市确定
+            onConfirm2(value, index){   
+            console.log(value)
+            console.log(this.provincesid)        
+            	if(value){ 
+            		this.show2=false;
+            
+            	
+            		console.log(value.region_id)
+            		this.tost2=value.text;
+            		this.cityid=value.region_id;
+            		console.log(this.cityid)
+            	}
+            },
+            //获取县区
+            regions3(){ 
+
+				const that=this;
+				if(this.cityid==''){ 
+					 mui.toast('请选择城市');
+					 return false;
+				}
+				console.log(this.cityid);
+
+				mui.get('http://www.kankanoo.com/get_district?city_id='+this.cityid,function(res){ 
+					let reg=[]
+						for(var i=0;i<res.data.length;i++){
+							res.data[i].text=res.data[i].region_name;
+							reg.push(res.data[i]);
+						}
+						console.log(reg)
+						that.columns3=reg
+				})
+
+				that.show3=true;
+
+            },
+            //获取县区
+            onCancel3(value, index){
+				this.show3=false;
+			},
+			//获取县区
+            onConfirm3(value, index){         
+            	if(value){ 
+            		this.show3=false;
+            		console.log(value)
+            		console.log(value.text)
+					this.county_id = value.region_id;
+					console.log(value.region_id);
+            		this.tost3=value.text;
+            		
+            	}
+            },
+			
+			//地域选择通用逻辑--获取省份
+// 			getParentid: function(){
+// 				var _this = this;
+// 				mui.get(kankanUrl+'get_parentid',function(res){
+// 					if(res.code){
+// 						for(var i=0;i<res.data.length;i++){
+// 							_this.province.push(res.data[i]);
+// 						}
+// 						console.log(JSON.stringify(_this.province));
+// 					}else{
+// 						mui.toast(res.msg);
+// 					}
+// 				});
+// 			},
+// 			
+// 			//获取城市
+// 			getCity: function(e){
+// 				var _this = this;
+// 				_this.city_select = 1;
+// 				_this.getUrl('get_citys',{province_id: _this.region_id.province_id},function(res){
+// 					if(res.code){
+// 						for(var i=0; i<res.data.length; i++){
+// 							_this.city.push(res.data[i]);
+// 						}
+// 					}else{
+// 						mui.toast(res.msg);
+// 					}
+// 				});
+// 			},
+// 			
+// 			//获取县区
+// 			getRegion: function(e){ 
+// 				var _this = this;
+// 				_this.county_select = 1;
+// 				//_this.region_id.county_id = 0;
+// 				//_this.county = [];
+// 				_this.getUrl('get_district',{city_id: _this.region_id.city_id},function(res){
+// 					if(res.code){
+// 						for(var i=0;i<res.data.length;i++){
+// 							_this.county.push(res.data[i]);
+// 						}
+// 					}else{
+// 						mui.toast(res.msg);
+// 					}
+// 				});
+// 			},
+// 			
+// 			//规范数据
+// 			IsShowSelect :function(i){
+// 				var _this = this;
+// 				if(i==1){_this.province_select = false;}
+// 				if(i==2){
+// 					_this.city_select = false;
+// 					if(!_this.region_id[0]){
+// 						mui.toast('请先选择省份');
+// 					}
+// 				}
+// 				if(i==3){
+// 					this.county_select = false; 
+// 					if(!_this.region_id[1]){
+// 						mui.toast('请先选择城市');
+// 					}
+// 				}
+// 			},
+			//post提交编辑资料
+			postButton: function(){
+				//开启遮罩
+				plus.nativeUI.showWaiting('上传中…',{});
+				var _this = this;
+				if(_this.web.w_total != _this.data.w_total || _this.web.w_click != _this.data.w_click){
+					Common.confirm('请输入支付密码',function(content){
+						_this.password = content;
+						_this.submitData();
+					},true,'您修改了推广预算和红包金额？',1);
+				}else{
+					_this.submitData();
+				}
+				//关闭遮罩
+				plus.nativeUI.closeWaiting();
+			},
+			submitData:function(){
+				var _this = this;
+				var region = 0;
+				console.log(_this.county_id)
+				if(_this.county_id){
+					region = _this.county_id;	//县区ID
+				}else if(_this.cityid){
+					region = _this.cityid;	//市ID
+				}else if(_this.province){
+					region = _this.province;	//省ID
+				}
+
+				var arg = {
+					token: userToken, 
+					w_region: region,	//面向地区ID,默认为0--必须
+					w_gender: _this.web.w_gender,	//性别值，默认为0--必须
+					w_yeara: _this.web.w_yeara,	//面向最小用户，默认10岁--必须
+					w_yearb: _this.web.w_yearb,	//面向最大用户，默认70岁--必须
+					w_adopt: _this.web.w_adopt,	//单户红包数量，默认0--必须
+					w_interval: _this.web.w_interval,	// 浏览时间，默认15秒--必须
+					w_effective: _this.web.w_effective,	// 间隔时间，默认1天--必须
+					w_describe: _this.data.w_describe,		//宝贝描述--非必须
+					w_total: _this.data.w_total,	// 自助推广预算，默认为0--必须
+					w_click: _this.data.w_click,	// 单击价格，默认为0--必须
+					password: _this.password	// 支付密码--有推广预算必须传入
+				};
+				mui.post(kankanUrl+'edit_website',arg,function(res){
+					if(res.code){
+						//延时刷新宝贝列表,提高用户体验
+						setTimeout(function(){
+							mui.back();
+						},1200);
+					}else{
+						mui.toast(res.msg);
+					}
+				});
+			},
+			
+			//get请求
+			getUrl: function(url,arg,fn){
+				mui.get(kankanUrl+url,arg,function(res){
+					fn(res);
+				})
+			}
+		}
+	});
+	
+	//右滑动
+	document.addEventListener("swiperight", function(){
+		mui.back('left');
+	});
+</script>
